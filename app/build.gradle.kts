@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt) // Apply Hilt plugin
     id("org.jetbrains.kotlin.kapt") // Direct application
+    alias(libs.plugins.kotlinxSerialization)
+
 }
 
 android {
@@ -66,6 +68,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -97,4 +100,16 @@ dependencies {
     // Hilt dependencies
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    implementation(libs.java.poet)
+
+    implementation(libs.kotlinx.serialization.json)
+}
+
+hilt {
+    enableAggregatingTask = false
+}
+
+kapt {
+    correctErrorTypes = true
 }
