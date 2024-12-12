@@ -12,7 +12,9 @@ maps-compose = "2.11.2"
 play-services-maps = "19.0.0"
 room = "2.5.2"
 hilt = "2.48.1"
+hilt-compose = "1.0.0"
 serialization = "1.6.0" # Latest version of kotlinx.serialization
+navigationCompose = "2.7.3" # Latest version of Navigation Compose
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,10 +42,12 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-compose" }
 
 java-poet = { group = "com.squareup", name = "javapoet", version = "1.13.0" }
 
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

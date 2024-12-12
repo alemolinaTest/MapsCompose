@@ -15,21 +15,7 @@ import kotlinx.serialization.json.Json
 @Singleton
 class CitiesRepository @Inject constructor(private val cityDao: CityDao, private val context: Context) {
 
-    fun isFileAvailable(context: Context): Boolean {
-        return try {
-            context.assets.open("cities.json").close() // Just test file existence
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
     fun loadCitiesFromAssets(context: Context): List<LocalCity> {
-        if (isFileAvailable(context)) {
-            Log.d("AssetsTest", "cities.json is available!")
-        } else {
-            Log.e("AssetsTest", "cities.json not found!")
-        }
         // Read the JSON file from the assets folder
         val json = context.assets.open("cities.json").bufferedReader().use { it.readText() }
 
@@ -40,10 +26,7 @@ class CitiesRepository @Inject constructor(private val cityDao: CityDao, private
     fun getJsonCities(): List<LocalCity> {
         val cities = loadCitiesFromAssets(context)
         // Perform additional transformations if needed
-        cities.forEach { city ->
-            println("City: ${city.name}, Country: ${city.country}, Coordinates: (${city.coord.lat}, ${city.coord.lon})")
-        }
-        return cities
+        return cities.filter { it.country == "AR" || it.country == "US" }
     }
 
     fun getCities(): Flow<List<City>> = flow {

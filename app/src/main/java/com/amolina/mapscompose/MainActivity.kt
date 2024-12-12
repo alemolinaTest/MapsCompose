@@ -26,8 +26,10 @@ import com.google.maps.android.compose.MarkerState
 import android.Manifest
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import com.amolina.mapscompose.data.City
+import com.amolina.mapscompose.ui.AppScaffold
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,73 +43,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             MapsComposeTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MyApp(mainViewModel)
-                }
+                AppScaffold(mainViewModel)
             }
         }
-    }
-}
-
-@RequiresApi(35)
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun MyApp(mainViewModel: MainViewModel) {
-    val locationPermissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    )
-
-    if (locationPermissionsState.allPermissionsGranted) {
-        // Show the map if permissions are granted
-        GoogleMapScreen(mainViewModel)
-    } else {
-        // Request location permissions
-        LocationPermissionScreen(locationPermissionsState)
-    }
-
-}
-
-@RequiresApi(35)
-@Composable
-fun GoogleMapScreen(mainViewModel: MainViewModel) {
-    // Define a position for the map camera
-    val jsonCitiesState = mainViewModel.jsonCities.collectAsState()
-//    val citiesState = mainViewModel.cities.collectAsState()
-//    val city = City(id = 0, name = "San Francisco", country = "USA", lat = 37.7749, lon = -122.4194)
-//    var defaultLocation = LatLng(37.7749, -122.4194) // San Francisco
-//    defaultLocation = LatLng(city.lat, city.lon) // San Francisco
-////    if(citiesState.value.first != null) {
-////         defaultLocation = LatLng(citiesState.lat, citiesState.lon) // San Francisco
-////    }
-    val defaultLocation = LatLng(jsonCitiesState.value.first().coord.lat, jsonCitiesState.value.first().coord.lon)
-    val cameraPositionState = CameraPositionState(
-        position = CameraPosition.fromLatLngZoom(defaultLocation, 12f)
-    )
-    val markerState = remember { MarkerState(defaultLocation) }
-
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        properties = MapProperties(
-            isMyLocationEnabled = true, // Enable user location
-            mapType = MapType.NORMAL // Options: NORMAL, HYBRID, SATELLITE, TERRAIN
-        ),
-        uiSettings = MapUiSettings(
-            zoomControlsEnabled = true,
-            myLocationButtonEnabled = true
-        ),
-    ) {
-        // Add a marker at the default location
-        Marker(
-            state = markerState,
-            title = jsonCitiesState.value.first().name,
-            snippet = "Welcome to ${jsonCitiesState.value.first().name} at ${jsonCitiesState.value.first().country}!"
-        )
     }
 }

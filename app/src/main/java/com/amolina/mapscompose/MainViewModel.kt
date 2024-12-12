@@ -15,29 +15,57 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MainViewModel @Inject constructor(private val citiesRepository: CitiesRepository) :
     ViewModel() {
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = isLoading
+    }
+
     private val _citiesState = MutableStateFlow<List<City>>(emptyList())
     val cities: StateFlow<List<City>> = _citiesState
 
     private val _jsonCitiesState = MutableStateFlow<List<LocalCity>>(emptyList())
     val jsonCities: StateFlow<List<LocalCity>> = _jsonCitiesState
 
+    private val _filteredList = MutableStateFlow<List<LocalCity>>(emptyList())
+
+    private val _selectedCity = MutableStateFlow<LocalCity?>(null)
+    val selectedCity: StateFlow<LocalCity?> = _selectedCity
+
     init {
-        fetchFilteredJsonCities()
+        fetchFilteredJsonCities("AR")
     }
 
-    private fun fetchJsonCities() {
+    fun fetchJsonCities() {
         viewModelScope.launch {
             _jsonCitiesState.value = citiesRepository.getJsonCities()
         }
     }
 
-    private fun fetchFilteredJsonCities() {
+    fun fetchFilteredJsonCities(filter: String) {
         viewModelScope.launch {
-            _jsonCitiesState.value = citiesRepository.getJsonCities().filter { cities -> cities.country.contains("AR") && cities.name.contains("Salta") }
+            if(_filteredList.value.isEmpty()) {
+                _jsonCitiesState.value = citiesRepository.getJsonCities().filter { cities ->
+                    cities.country.contains(filter) || cities.name.contains(filter)
+                }
+                _filteredList.value = _jsonCitiesState.value
+            }else{
+                _jsonCitiesState.value = _filteredList.value.filter { (_, name, country, coord) ->
+                    country.contains(filter) || name.contains(filter)
+                }
+            }
         }
     }
 
-    private fun fetchCities() {
+    fun fetchFilteredIdJsonCities(cityId: Int) {
+        viewModelScope.launch {
+            _selectedCity.value = _jsonCitiesState.value.filter { cities -> cities.id == cityId }.first()
+        }
+    }
+
+    fun fetchCities() {
         viewModelScope.launch {
             citiesRepository.getCities()
                 .collect { citiesList ->
@@ -46,7 +74,7 @@ class MainViewModel @Inject constructor(private val citiesRepository: CitiesRepo
         }
     }
 
-    fun fetchFilteredCities(filter: String) {
+    fun getFilteredCities(filter: String) {
         viewModelScope.launch {
             citiesRepository.getCities()
                 .map { cities -> cities.filter { it.name.contains(filter, true) } }

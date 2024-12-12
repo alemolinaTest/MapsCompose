@@ -100,10 +100,13 @@ dependencies {
     // Hilt dependencies
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    // Jetpack Compose integration with Hilt
+    implementation(libs.hilt.compose)
 
     implementation(libs.java.poet)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation.compose)
 }
 
 hilt {
