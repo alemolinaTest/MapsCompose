@@ -4,6 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt) // Apply Hilt plugin
     id("org.jetbrains.kotlin.kapt") // Direct application
 }
 
@@ -88,7 +89,12 @@ dependencies {
     implementation(libs.google.maps.compose)
     implementation(libs.accompanist.permissions)
 
+    //room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler) // For annotation processing
+
+    // Hilt dependencies
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 }
