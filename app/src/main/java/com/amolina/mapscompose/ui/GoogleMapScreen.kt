@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.amolina.mapscompose.MainViewModel
+import com.amolina.mapscompose.models.LocalCity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.model.CameraPosition
@@ -21,11 +22,12 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import kotlinx.coroutines.delay
 
 @RequiresApi(35)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MainScreen(mainViewModel: MainViewModel, modifier: Modifier, navController: NavHostController) {
+fun MainScreen(mainViewModel: MainViewModel, navController: NavHostController) {
     val locationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -35,9 +37,7 @@ fun MainScreen(mainViewModel: MainViewModel, modifier: Modifier, navController: 
 
     if (locationPermissionsState.allPermissionsGranted) {
         // Show the cities list if permissions are granted
-        CitiesListScreen(viewModel = mainViewModel) { cityId ->
-            navController.navigate("googleMap/$cityId") // Navigate to GoogleMapScreen with cityId
-        }
+        CitiesListScreen(viewModel = mainViewModel, navController = navController)
     } else {
         // Request location permissions
         LocationPermissionScreen(locationPermissionsState)
@@ -47,43 +47,48 @@ fun MainScreen(mainViewModel: MainViewModel, modifier: Modifier, navController: 
 
 @RequiresApi(35)
 @Composable
-fun GoogleMapScreen(cityId: Int, viewModel: MainViewModel, onContentLoaded: () -> Unit) {
+fun GoogleMapScreen(city: LocalCity, viewModel: MainViewModel) {
     // Define a position for the map camera
     // Simulate data loading
-    LaunchedEffect(cityId) {
+    LaunchedEffect(city) {
         // Load data here
-        onContentLoaded()
+        delay(1000)
+        viewModel.setLoading(false)
     }
 
-    viewModel.fetchFilteredIdJsonCities(cityId)
-    val city = viewModel.selectedCity.collectAsState().value
+    val isloading = viewModel.isLoading.collectAsState()
 
-    city?.let {
-        val defaultLocation =
-            LatLng(city.coord.lat, city.coord.lon)
-        val cameraPositionState = CameraPositionState(
-            position = CameraPosition.fromLatLngZoom(defaultLocation, 12f)
-        )
-        val markerState = remember { MarkerState(defaultLocation) }
+    if (isloading.value) {
+        LoadingSpinner()
+    } else {
 
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(
-                isMyLocationEnabled = true, // Enable user location
-                mapType = MapType.NORMAL // Options: NORMAL, HYBRID, SATELLITE, TERRAIN
-            ),
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled = true,
-                myLocationButtonEnabled = true
-            ),
-        ) {
-            // Add a marker at the default location
-            Marker(
-                state = markerState,
-                title = city.name,
-                snippet = "Welcome to ${city.name} at ${city.country}!"
+        city?.let {
+            val defaultLocation =
+                LatLng(city.coord.lat, city.coord.lon)
+            val cameraPositionState = CameraPositionState(
+                position = CameraPosition.fromLatLngZoom(defaultLocation, 12f)
             )
+            val markerState = remember { MarkerState(defaultLocation) }
+
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(
+                    isMyLocationEnabled = true, // Enable user location
+                    mapType = MapType.NORMAL // Options: NORMAL, HYBRID, SATELLITE, TERRAIN
+                ),
+                uiSettings = MapUiSettings(
+                    zoomControlsEnabled = true,
+                    myLocationButtonEnabled = true
+                ),
+            ) {
+                // Add a marker at the default location
+                Marker(
+                    state = markerState,
+                    title = city.name,
+                    snippet = "Welcome to ${city.name} at ${city.country}!"
+                )
+            }
         }
     }
 }

@@ -1,17 +1,18 @@
 package com.amolina.mapscompose.models
 
-import kotlinx.serialization.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-@Serializable
+@Parcelize
 data class LocalCity(
     val id: Int,
     val name: String,
     val country: String,
     val coord: Coord
-)
+):Parcelable
 
-@Serializable
+@Parcelize
 data class Coord(
     val lon: Double,
     val lat: Double
-)
+):Parcelable

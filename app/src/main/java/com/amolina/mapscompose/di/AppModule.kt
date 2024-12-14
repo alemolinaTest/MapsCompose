@@ -10,6 +10,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -31,5 +33,8 @@ class AppModule {
     @Provides
     fun providesCityRepository(dao: CityDao, context: Application): CitiesRepository =
         CitiesRepository(dao, context)
+
+    @Provides
+    fun providesDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
 }

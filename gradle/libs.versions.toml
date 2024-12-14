@@ -15,6 +15,7 @@ hilt = "2.48.1"
 hilt-compose = "1.0.0"
 serialization = "1.6.0" # Latest version of kotlinx.serialization
 navigationCompose = "2.7.3" # Latest version of Navigation Compose
+gson = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ java-poet = { group = "com.squareup", name = "javapoet", version = "1.13.0" }
 
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

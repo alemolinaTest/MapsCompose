@@ -20,12 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.amolina.mapscompose.MainViewModel
 import com.amolina.mapscompose.models.LocalCity
 import com.amolina.mapscompose.ui.theme.Purple40
 
 @Composable
-fun CitiesListScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, onItemClick: (Int) -> Unit) {
+fun CitiesListScreen(
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+) {
     val cities by viewModel.jsonCities.collectAsState()
 
     LazyColumn(
@@ -35,7 +41,7 @@ fun CitiesListScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, on
             .padding(all = 16.dp)
     ) {
         items(cities) { city ->
-            CityItem(city = city,onItemClick = onItemClick)
+            CityItem(city = city, navController = navController, viewModel = viewModel)
         }
         item {
             Spacer(modifier = Modifier.height(80.dp))
@@ -44,7 +50,7 @@ fun CitiesListScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, on
 }
 
 @Composable
-fun CityItem(city: LocalCity, onItemClick: (Int) -> Unit) {
+fun CityItem(city: LocalCity, navController: NavHostController, viewModel: MainViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,9 +59,19 @@ fun CityItem(city: LocalCity, onItemClick: (Int) -> Unit) {
                 color = MaterialTheme.colorScheme.background,
                 shape = RoundedCornerShape(size = 8.dp)
             )
-            .clickable { onItemClick(city.id) }
+            .clickable {
+                viewModel.setLoading(true)
+                // Save the city object in the SavedStateHandle
+                navController.currentBackStackEntry?.savedStateHandle?.set("city", city)
+                navController.navigate("googleMap")
+            }
     ) {
-        Text(modifier = Modifier.padding(horizontal = 8.dp), text = city.name, color = Purple40, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            text = city.name,
+            color = Purple40,
+            style = MaterialTheme.typography.bodyLarge
+        )
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
             text = city.country,

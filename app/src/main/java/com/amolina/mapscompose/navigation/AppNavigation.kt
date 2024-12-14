@@ -8,11 +8,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.amolina.mapscompose.MainViewModel
+import com.amolina.mapscompose.models.LocalCity
 import com.amolina.mapscompose.ui.CitiesListScreen
 import com.amolina.mapscompose.ui.GoogleMapScreen
 import com.amolina.mapscompose.ui.LoadingSpinner
@@ -32,30 +31,31 @@ fun AppNavigation(
             composable("main") {
                 MainScreen(
                     mainViewModel = viewModel,
-                    modifier = modifier,
                     navController = navController
                 )
             }
             composable("citiesList") {
                 CitiesListScreen(
                     viewModel = viewModel,
-                    modifier = modifier
-                ) { cityId ->
-                    viewModel.setLoading(true)
-                    navController.navigate("googleMap/$cityId")
-                }
+                    modifier = modifier,
+                    navController = navController,
+                )
             }
             composable(
-                "googleMap/{cityId}",
-                arguments = listOf(navArgument("cityId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val cityId = backStackEntry.arguments?.getInt("cityId")
-                cityId?.let {
+                "googleMap",
+                //arguments = listOf(navArgument("city") { type = NavType.ParcelableType(LocalCity::class.java) })
+            ) { _ ->
+                //val city = backStackEntry.arguments?.getParcelable<LocalCity>("user")
+                // Retrieve the Parcelable object using SavedStateHandle
+                val city = navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.get<LocalCity>("city")
+                city?.let {
                     GoogleMapScreen(
-                        cityId = it,
+                        city = it,
                         viewModel = viewModel,
-                        onContentLoaded = { viewModel.setLoading(false) }
-                    )
+
+                        )
                 }
             }
         }

@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt) // Apply Hilt plugin
     id("org.jetbrains.kotlin.kapt") // Direct application
     alias(libs.plugins.kotlinxSerialization)
+    id("kotlin-parcelize")
 
 }
 
@@ -107,6 +108,8 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.gson)
 }
 
 hilt {
