@@ -25,7 +25,7 @@ class CitiesRepository @Inject constructor(private val cityDao: CityDao, private
     fun getJsonCities(): List<LocalCity> {
         val cities = loadCitiesFromAssets(context)
         // Perform additional transformations if needed
-        return cities.filter { it.country == "AR" || it.country == "US" }
+        return cities.filter { it.country == "US" }
     }
 
     fun getCities(): Flow<List<City>> = flow {

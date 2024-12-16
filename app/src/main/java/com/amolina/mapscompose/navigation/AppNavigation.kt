@@ -26,7 +26,7 @@ fun AppNavigation(
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
         NavHost(navController = navController, startDestination = "main") {
             composable("main") {
                 MainScreen(
@@ -43,19 +43,15 @@ fun AppNavigation(
             }
             composable(
                 "googleMap",
-                //arguments = listOf(navArgument("city") { type = NavType.ParcelableType(LocalCity::class.java) })
             ) { _ ->
-                //val city = backStackEntry.arguments?.getParcelable<LocalCity>("user")
-                // Retrieve the Parcelable object using SavedStateHandle
                 val city = navController.previousBackStackEntry
                     ?.savedStateHandle
-                    ?.get<LocalCity>("city")
-                city?.let {
+                    ?.get<List<LocalCity>>("cities")
+                city?.let { citiesList ->
                     GoogleMapScreen(
-                        city = it,
+                        cities = citiesList,
                         viewModel = viewModel,
-
-                        )
+                    )
                 }
             }
         }

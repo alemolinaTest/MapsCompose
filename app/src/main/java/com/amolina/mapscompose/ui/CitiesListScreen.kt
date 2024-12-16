@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.amolina.mapscompose.MainViewModel
 import com.amolina.mapscompose.models.LocalCity
@@ -38,10 +37,14 @@ fun CitiesListScreen(
         modifier = modifier
             .fillMaxSize()
             .background(color = Color.Black)
-            .padding(all = 16.dp)
+            .padding(all = 16.dp, )
     ) {
         items(cities) { city ->
-            CityItem(city = city, navController = navController, viewModel = viewModel)
+            CityItem(
+                city = city,
+                navController = navController,
+                viewModel = viewModel,
+            )
         }
         item {
             Spacer(modifier = Modifier.height(80.dp))
@@ -50,7 +53,11 @@ fun CitiesListScreen(
 }
 
 @Composable
-fun CityItem(city: LocalCity, navController: NavHostController, viewModel: MainViewModel) {
+fun CityItem(
+    city: LocalCity,
+    navController: NavHostController,
+    viewModel: MainViewModel,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +69,7 @@ fun CityItem(city: LocalCity, navController: NavHostController, viewModel: MainV
             .clickable {
                 viewModel.setLoading(true)
                 // Save the city object in the SavedStateHandle
-                navController.currentBackStackEntry?.savedStateHandle?.set("city", city)
+                navController.currentBackStackEntry?.savedStateHandle?.set("cities", listOf(city) )
                 navController.navigate("googleMap")
             }
     ) {

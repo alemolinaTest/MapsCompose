@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ fun AppScaffold(viewModel: MainViewModel) {
     val coroutineScope = rememberCoroutineScope()
     // Create and remember NavController
     val navController = rememberNavController()
+    val cities by viewModel.jsonCities.collectAsState()
 
     Scaffold(
         topBar = {
@@ -45,10 +47,12 @@ fun AppScaffold(viewModel: MainViewModel) {
                     coroutineScope.launch {
                         viewModel.fetchFilteredJsonCities(query)
                     }
-                }, onClearSearch = {
+                },
+                onShowAll = {
                     searchQuery = ""
                     coroutineScope.launch {
-                        navController.navigate("main")
+                        navController.currentBackStackEntry?.savedStateHandle?.set("cities", cities)
+                        navController.navigate("googleMap")
                     }
                 })
         },
@@ -67,7 +71,7 @@ fun AppScaffold(viewModel: MainViewModel) {
 fun TopAppBarWithSearch(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onClearSearch: () -> Unit,
+    onShowAll: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -86,10 +90,10 @@ fun TopAppBarWithSearch(
                     singleLine = true,
                 )
                 Button(
-                    onClick = onClearSearch,
+                    onClick = onShowAll,
                     modifier = Modifier.height(48.dp)
                 ) {
-                    Text("Clear")
+                    Text("Show All")
                 }
             }
         }
