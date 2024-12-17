@@ -110,6 +110,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.gson)
+
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
 }
 
 hilt {

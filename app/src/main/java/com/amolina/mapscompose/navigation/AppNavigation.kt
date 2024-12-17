@@ -1,5 +1,6 @@
 package com.amolina.mapscompose.navigation
 
+import VideoPlayerScreen
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +54,9 @@ fun AppNavigation(
                         viewModel = viewModel,
                     )
                 }
+            }
+            composable("exoplayer") {
+                VideoPlayerScreen()
             }
         }
         if (isLoading) {

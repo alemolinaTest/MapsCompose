@@ -1,5 +1,6 @@
 package com.amolina.mapscompose.ui
 
+import VideoPlayerScreen
 import android.annotation.SuppressLint
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +42,8 @@ fun AppScaffold(viewModel: MainViewModel) {
 
     Scaffold(
         topBar = {
-            TopAppBarWithSearch(searchQuery = searchQuery,
+            TopAppBarWithSearch(
+                searchQuery = searchQuery,
                 onSearchQueryChange = { query ->
                     searchQuery = query
                     coroutineScope.launch {
@@ -54,9 +56,16 @@ fun AppScaffold(viewModel: MainViewModel) {
                         navController.currentBackStackEntry?.savedStateHandle?.set("cities", cities)
                         navController.navigate("googleMap")
                     }
-                })
+                },
+                onVideoShow = {
+                    coroutineScope.launch {
+                        navController.navigate("exoPlayer")
+                    }
+                },
+            )
         },
-    ) { innerPadding ->
+
+        ) { innerPadding ->
         AppNavigation(
             viewModel = viewModel,
             modifier = Modifier.padding(innerPadding),
@@ -72,6 +81,7 @@ fun TopAppBarWithSearch(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onShowAll: () -> Unit,
+    onVideoShow: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -94,6 +104,12 @@ fun TopAppBarWithSearch(
                     modifier = Modifier.height(48.dp)
                 ) {
                     Text("Show All")
+                }
+                Button(
+                    onClick = onVideoShow,
+                    modifier = Modifier.height(48.dp)
+                ) {
+                    Text("Video")
                 }
             }
         }

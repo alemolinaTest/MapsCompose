@@ -1,6 +1,8 @@
 package com.amolina.mapscompose.di
 
 import android.app.Application
+import android.content.Context
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import com.amolina.mapscompose.data.AppDatabase
 import com.amolina.mapscompose.data.CityDao
@@ -8,6 +10,7 @@ import com.amolina.mapscompose.repositories.CitiesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
