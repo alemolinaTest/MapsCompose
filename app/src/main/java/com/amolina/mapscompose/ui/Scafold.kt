@@ -1,6 +1,5 @@
 package com.amolina.mapscompose.ui
 
-import VideoPlayerScreen
 import android.annotation.SuppressLint
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -24,20 +23,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.amolina.mapscompose.MainViewModel
-import com.amolina.mapscompose.navigation.AppNavigation
 import kotlinx.coroutines.launch
 
 @RequiresApi(35)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun AppScaffold(viewModel: MainViewModel) {
+fun ScaffoldScreen(viewModel: MainViewModel, navController: NavHostController) {
 
     var searchQuery by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     // Create and remember NavController
-    val navController = rememberNavController()
     val cities by viewModel.jsonCities.collectAsState()
 
     Scaffold(
@@ -57,17 +54,12 @@ fun AppScaffold(viewModel: MainViewModel) {
                         navController.navigate("googleMap")
                     }
                 },
-                onVideoShow = {
-                    coroutineScope.launch {
-                        navController.navigate("exoPlayer")
-                    }
-                },
             )
         },
 
         ) { innerPadding ->
-        AppNavigation(
-            viewModel = viewModel,
+        CitiesMainScreen(
+            mainViewModel = viewModel,
             modifier = Modifier.padding(innerPadding),
             navController = navController
         )
@@ -81,7 +73,6 @@ fun TopAppBarWithSearch(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onShowAll: () -> Unit,
-    onVideoShow: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -104,12 +95,6 @@ fun TopAppBarWithSearch(
                     modifier = Modifier.height(48.dp)
                 ) {
                     Text("Show All")
-                }
-                Button(
-                    onClick = onVideoShow,
-                    modifier = Modifier.height(48.dp)
-                ) {
-                    Text("Video")
                 }
             }
         }

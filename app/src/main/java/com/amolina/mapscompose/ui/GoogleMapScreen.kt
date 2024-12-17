@@ -34,7 +34,11 @@ import kotlinx.coroutines.delay
 @RequiresApi(35)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MainScreen(mainViewModel: MainViewModel, navController: NavHostController) {
+fun CitiesMainScreen(
+    mainViewModel: MainViewModel,
+    navController: NavHostController,
+    modifier: Modifier
+) {
     val locationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
