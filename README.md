@@ -1,2 +1,3 @@
 # MapsCompose
-Compose Map application test
+Compose Map application functionality
+Exoplayer Video Streaming basic functionality
