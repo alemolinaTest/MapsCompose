@@ -8,24 +8,30 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 @Singleton
-class CitiesRepository @Inject constructor(private val cityDao: CityDao, private val context: Context) {
+class CitiesRepository @Inject constructor(
+    private val cityDao: CityDao,
+    private val context: Context
+) {
 
-    private fun loadCitiesFromAssets(context: Context): List<LocalCity> {
-        // Read the JSON file from the assets folder
-        val json = context.assets.open("cities.json").bufferedReader().use { it.readText() }
-        val type = object : TypeToken<List<LocalCity>>() {}.type
-        // Parse the JSON into a list of LocalCity objects
-        return Gson().fromJson(json, type)
-    }
+    private suspend fun loadCitiesFromAssets(context: Context): List<LocalCity> =
+        withContext(Dispatchers.IO) {
+            // Read the JSON file from the assets folder
+            val json = context.assets.open("cities.json").bufferedReader().use { it.readText() }
+            val type = object : TypeToken<List<LocalCity>>() {}.type
+            // Parse the JSON into a list of LocalCity objects
+            Gson().fromJson(json, type)
+        }
 
-    fun getJsonCities(): List<LocalCity> {
+    suspend fun getJsonCities(): List<LocalCity> = withContext(Dispatchers.IO) {
         val cities = loadCitiesFromAssets(context)
         // Perform additional transformations if needed
-        return cities.filter { it.country == "US" }
+        cities.filter { it.country == "US" }
     }
 
     fun getCities(): Flow<List<City>> = flow {
